@@ -5,8 +5,12 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     packaging \
     fsspec \
     s3fs \
-    boto3
+    boto3 \
+    cachetools \
+    cerberus
 USER odoo
 
 COPY ./odoo/conf/dev.conf /etc/odoo/odoo.conf
 COPY ./odoo/addons/ /mnt/extra-addons/
+
+CMD ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
