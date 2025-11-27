@@ -5,6 +5,10 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
 
+    odoo_url: '%env(ODOO_ENDPOINT)%'
+    minio_url: '%env(MINIO_ENDPOINT)%'
+    minio_bucket: '%env(MINIO_BUCKET)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -16,5 +20,19 @@ services:
     App\:
         resource: '../src/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\System\Infrastructure\Probe\OdooHealthProbe:
+        arguments:
+            $odooUrl: '%odoo_url%'
+
+    App\System\Infrastructure\Probe\MinioHealthProbe:
+        arguments:
+            $minioUrl: '%minio_url%'
+            $minioBucket: '%minio_bucket%'
+
+    App\System\Application\UseCase\CheckSystemHealthHandler:
+        arguments:
+            $probes:
+            - '@App\System\Infrastructure\Probe\SymfonyHealthProbe'
+            - '@App\System\Infrastructure\Probe\OdooHealthProbe'
+            - '@App\System\Infrastructure\Probe\MinioHealthProbe'
+            - '@App\System\Infrastructure\Probe\PostgresHealthProbe'

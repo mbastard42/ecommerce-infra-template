@@ -13,6 +13,7 @@
         'server_environment',
         'fs_storage',
         'fs_attachment',
+        'health',
     ],
     'auto_install': True,
     'installable': True,

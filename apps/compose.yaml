@@ -51,6 +51,7 @@ services:
           action: rebuild
     networks: [dev]
     ports: ["5173:5173"]
+    command: ["npm", "run", "dev"]
     depends_on: [backend]
     restart: on-failure
     logging:
@@ -74,8 +75,14 @@ services:
           action: rebuild
         - path: ./backend/symfony/composer.json
           action: rebuild
+    environment:
+      MINIO_ENDPOINT: ${MINIO_ENDPOINT}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      ODOO_ENDPOINT: ${ODOO_ENDPOINT}
+      DATABASE_URL: ${PG_SYMFONY_URL}
     networks: [dev]
     ports: ["8000:8000"]
+    command: ["php","-S", "0.0.0.0:8000", "-t", "public"]
     depends_on: [postgres, minio, admin]
     restart: on-failure
     logging:
@@ -130,6 +137,8 @@ services:
     ports:
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
       - "${MINIO_API_PORT}:${MINIO_API_PORT}"
+    entrypoint: ["/usr/local/bin/config.sh"]
+    command: ["server", "${MINIO_DATA_PATH}", "--console-address", ":${MINIO_CONSOLE_PORT}"]
     depends_on: [lgtm]
     restart: on-failure
     logging:
@@ -145,16 +154,19 @@ services:
       context: ./admin/
       target: dev
     environment:
-      HOST: ${POSTGRES_HOST}
-      USER: ${PG_ODOO_USER}
-      PASSWORD: ${PG_ODOO_PASSWORD}
-      DATABASE: ${PG_ODOO_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${PG_ODOO_USER}
+      POSTGRES_PASSWORD: ${PG_ODOO_PASSWORD}
+      POSTGRES_DATABASE: ${PG_ODOO_DB}
       MINIO_BUCKET: ${MINIO_BUCKET}
       MINIO_ENDPOINT: ${MINIO_ENDPOINT}
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     networks: [dev]
     ports: ["8069:8069"]
+    entrypoint: ["/entrypoint.sh"]
+    command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
     depends_on: [lgtm, postgres, minio]
     restart: on-failure
     logging:

@@ -10,7 +10,12 @@ RUN pip3 install --no-cache-dir --break-system-packages \
     cerberus
 USER odoo
 
-COPY ./odoo/conf/dev.conf /etc/odoo/odoo.conf
+COPY ./odoo/entrypoint.sh /entrypoint.sh
+COPY ./odoo/conf/dev.conf /tmp/odoo.conf
 COPY ./odoo/addons/ /mnt/extra-addons/
 
-CMD ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends gettext-base && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN chmod +x /entrypoint.sh
+USER odoo
