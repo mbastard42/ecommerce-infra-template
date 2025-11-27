@@ -1,0 +1,135 @@
+networks:
+  dev:
+    driver: bridge
+
+services:
+
+  lgtm:
+
+    container_name: lgtm
+    image: grafana/otel-lgtm
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SERVER_ROOT_URL: http://localhost:3001
+    networks: [dev]
+    ports:
+      - "3001:3000" # Grafana UI
+      - "3100:3100" # Loki endpoint
+
+  pgadmin:
+
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    volumes:
+      - ./databases/servers.json:/pgadmin4/servers.json
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_SERVER_JSON_FILE: '/pgadmin4/servers.json'
+    networks: [dev]
+    ports: ["4200:80"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=pgadmin,env=dev"
+
+  frontend:
+
+    build:
+      target: dev
+    develop:
+      watch:
+        - path: ./frontend/svelte/src
+          target: /app/src
+          action: sync
+        - path: ./frontend/svelte/static
+          target: /app/static
+          action: sync
+        - path: ./frontend/svelte/package.json
+          action: rebuild
+        - path: ./frontend/svelte/package-lock.json
+          action: rebuild
+        - path: ./frontend/svelte/svelte.config.js
+          action: rebuild
+        - path: ./frontend/svelte/vite.config.ts
+          action: rebuild
+        - path: ./frontend/svelte/tsconfig.json
+          action: rebuild
+    networks: [dev]
+    ports: ["5173:5173"]
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=frontend,env=dev"
+
+  backend:
+
+    build:
+      target: dev
+    develop:
+      watch:
+        - path: ./backend/symfony/src
+          action: sync
+          target: /app/src
+        - path: ./backend/symfony/config
+          action: rebuild
+        - path: ./backend/symfony/composer.json
+          action: rebuild
+    networks: [dev]
+    ports: ["8000:8000"]
+    command: ["php","-S", "0.0.0.0:8000", "-t", "public"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=backend,env=dev"
+
+  postgres:
+
+    build:
+      target: dev
+    develop:
+      watch:
+        - path: ./databases/postgres/init/
+          action: rebuild
+    networks: [dev]
+    ports: ["${POSTGRES_PORT}:${POSTGRES_PORT}"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=postgres,env=dev"
+
+  minio:
+
+    build:
+      target: dev
+    networks: [dev]
+    ports:
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+      - "${MINIO_API_PORT}:${MINIO_API_PORT}"
+    entrypoint: ["/usr/local/bin/config.sh"]
+    command: ["server", "${MINIO_DATA_PATH}", "--console-address", ":${MINIO_CONSOLE_PORT}"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=minio,env=dev"
+
+  admin:
+
+    build:
+      target: dev
+    networks: [dev]
+    ports: ["8069:8069"]
+    entrypoint: ["/entrypoint.sh"]
+    command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=admin,env=dev"

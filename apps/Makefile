@@ -1,19 +1,37 @@
 SHELL := /bin/bash
 
 ENV_DEV ?= .env.dev
-COMPOSE := docker compose --project-directory .
+COMPOSE := docker compose --project-directory . -f compose.yaml -f compose.dev.yaml --env-file $(ENV_DEV)
 UP := up --watch --build --remove-orphans
 DOWN := down --remove-orphans -v
 
 up:
-	$(COMPOSE) --env-file $(ENV_DEV) $(UP)
+	$(COMPOSE) $(UP) \
+		--no-attach postgres \
+		--no-attach minio \
+		--no-attach admin \
+		--no-attach pgadmin \
+		--no-attach lgtm \
+		--no-attach backend
+
+front:
+	$(COMPOSE) $(UP) frontend
+
+back:
+	$(COMPOSE) $(UP) backtend
+
+minio:
+	$(COMPOSE) $(UP) minio
+
+postgres:
+	$(COMPOSE) $(UP) postgres
+
+admin:
+	$(COMPOSE) $(UP) admin
 
 down:
-	$(COMPOSE) --env-file $(ENV_DEV) $(DOWN) 
+	$(COMPOSE) $(DOWN) 
 
 re: down up
 
-deps:
-	docker plugin install grafana/loki-docker-driver:3.3.2-arm64 --alias loki --grant-all-permissions
-
-.PHONY: up down re deps
+.PHONY: up down re front back minio postgres admin

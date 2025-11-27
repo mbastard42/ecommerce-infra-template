@@ -25,19 +25,6 @@
   
 		<!-- Nav -->
 		<nav class="flex items-center gap-3 text-xs">
-		  <!-- Lien interne health -->
-		  <a
-			href="/health"
-			class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5
-				   font-medium text-emerald-200 shadow-sm hover:bg-emerald-500/20 hover:border-emerald-400
-				   transition-colors"
-		  >
-			<span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-			Health
-		  </a>
-  
-		  <!-- Séparateur -->
-		  <span class="hidden sm:inline h-4 w-px bg-slate-700/70" />
   
 		  <!-- Services externes -->
 		  <div class="flex items-center gap-2 overflow-x-auto scrollbar-none">
@@ -49,7 +36,7 @@
 					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
 					 whitespace-nowrap transition-colors"
 			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-sky-400" />
+			  <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
 			  Grafana
 			</a>
   
@@ -61,7 +48,7 @@
 					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
 					 whitespace-nowrap transition-colors"
 			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-orange-400" />
+			  <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
 			  pgAdmin
 			</a>
   
@@ -73,7 +60,7 @@
 					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
 					 whitespace-nowrap transition-colors"
 			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+			  <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
 			  Odoo
 			</a>
   
@@ -85,7 +72,7 @@
 					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
 					 whitespace-nowrap transition-colors"
 			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-lime-400" />
+			  <span class="h-1.5 w-1.5 rounded-full bg-lime-400"></span>
 			  MinIO
 			</a>
   
@@ -97,7 +84,7 @@
 					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
 					 whitespace-nowrap transition-colors"
 			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-violet-400" />
+			  <span class="h-1.5 w-1.5 rounded-full bg-violet-400"></span>
 			  Symfony API
 			</a>
 		  </div>

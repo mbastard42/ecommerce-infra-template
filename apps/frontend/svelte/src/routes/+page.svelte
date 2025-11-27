@@ -23,7 +23,9 @@
     error = null;
 
     try {
-      const res = await fetch('/');
+      const res = await fetch('/health', {
+        headers: { Accept: 'application/json' }
+      });
       const data = await res.json();
       health = data;
       if (!res.ok) {
@@ -56,7 +58,7 @@
               <span
                 class={`h-2 w-2 rounded-full
                   ${health.status === 'ok' ? 'bg-emerald-400' : 'bg-rose-400'}`}
-              />
+              ></span>
               {health.status === 'ok' ? 'All systems nominal' : 'Degraded'}
             </span>
           {/if}
@@ -75,7 +77,7 @@
           disabled:cursor-not-allowed disabled:opacity-60"
       >
         {#if loading}
-          <span class="h-3 w-3 animate-spin rounded-full border-[2px] border-slate-100/60 border-t-transparent" />
+          <span class="h-3 w-3 animate-spin rounded-full border-[2px] border-slate-100/60 border-t-transparent"></span>
           <span>Rafraîchissement…</span>
         {:else}
           <span class="h-4 w-4">⟳</span>
@@ -142,16 +144,16 @@
               {#each Array(3) as _, i}
                 <tr class="animate-pulse" aria-hidden="true">
                   <td class="px-4 py-4">
-                    <div class="h-3 w-24 rounded bg-slate-800" />
+                    <div class="h-3 w-24 rounded bg-slate-800"></div>
                   </td>
                   <td class="px-4 py-4">
-                    <div class="h-3 w-16 rounded bg-slate-800" />
+                    <div class="h-3 w-16 rounded bg-slate-800"></div>
                   </td>
                   <td class="px-4 py-4">
-                    <div class="h-3 w-12 rounded bg-slate-800" />
+                    <div class="h-3 w-12 rounded bg-slate-800"></div>
                   </td>
                   <td class="px-4 py-4">
-                    <div class="h-3 w-40 rounded bg-slate-800" />
+                    <div class="h-3 w-40 rounded bg-slate-800"></div>
                   </td>
                 </tr>
               {/each}
@@ -173,7 +175,7 @@
                       <span
                         class={`h-2 w-2 rounded-full
                           ${s.status === 'ok' ? 'bg-emerald-400' : 'bg-rose-400'}`}
-                      />
+                      ></span>
                       {s.status}
                     </span>
                   </td>
@@ -205,7 +207,7 @@
                                     <span
                                       class={`h-1.5 w-1.5 rounded-full
                                         ${(subData as any).status === 'ok' ? 'bg-emerald-400' : 'bg-rose-400'}`}
-                                    />
+                                    ></span>
                                     {(subData as any).status}
                                   </span>
                                 {/if}

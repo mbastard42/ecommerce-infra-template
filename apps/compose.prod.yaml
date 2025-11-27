@@ -1,0 +1,89 @@
+networks:
+  net-front:
+    driver: bridge
+  net-back:
+    driver: bridge
+
+services:
+
+  frontend:
+
+    build:
+      target: prod
+    environment:
+      TZ: ${TZ}
+      EMAIL: ${EMAIL}
+      DOMAIN: ${DOMAIN}
+    networks: [net-front]
+    ports:
+      - "80:80"
+      - "443:443"
+    entrypoint: ["/usr/bin/caddy","run","--config","/etc/caddy/Caddyfile","--adapter","caddyfile"]
+    
+  backend:
+
+    build:
+      target: dev
+    develop:
+      watch:
+        - path: ./backend/symfony/src
+          action: sync
+          target: /app/src
+        - path: ./backend/symfony/config
+          action: rebuild
+        - path: ./backend/symfony/composer.json
+          action: rebuild
+    networks: [net-front, net-back]
+    ports: ["8000:8000"]
+    command: ["php","-S", "0.0.0.0:8000", "-t", "public"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=backend,env=dev"
+
+  postgres:
+
+    build:
+      target: dev
+    develop:
+      watch:
+        - path: ./databases/postgres/init/
+          action: rebuild
+    networks: [net-back]
+    ports: ["${POSTGRES_PORT}:${POSTGRES_PORT}"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=postgres,env=dev"
+
+  minio:
+
+    build:
+      target: dev
+    networks: [net-back]
+    ports:
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+      - "${MINIO_API_PORT}:${MINIO_API_PORT}"
+    entrypoint: ["/usr/local/bin/config.sh"]
+    command: ["server", "${MINIO_DATA_PATH}", "--console-address", ":${MINIO_CONSOLE_PORT}"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=minio,env=dev"
+
+  admin:
+
+    build:
+      target: dev
+    networks: [net-back]
+    ports: ["8069:8069"]
+    entrypoint: ["/entrypoint.sh"]
+    command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://localhost:3100/loki/api/v1/push"
+        loki-external-labels: "service=admin,env=dev"
