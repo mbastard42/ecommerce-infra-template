@@ -15,7 +15,7 @@
 		<!-- Logo / titre -->
 		<div class="flex items-center gap-2">
 		  <div class="h-7 w-7 rounded-lg bg-slate-800 flex items-center justify-center text-xs font-semibold">
-			3SO
+			S3PO
 		  </div>
 		  <div class="flex flex-col leading-tight">
 			<span class="text-sm font-medium">Dev console</span>
@@ -96,3 +96,4 @@
 	  {@render children()}
 	</main>
   </div>
+

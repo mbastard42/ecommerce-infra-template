@@ -1,18 +1,18 @@
 localhost {
-	
-	tls internal
-	encode zstd gzip
+    tls internal
+    encode zstd gzip
 
-	root * /usr/share/caddy
-	try_files {path} /index.html
-
-	file_server
-
-	    handle /health {
-        reverse_proxy backend:8000
+    handle /health {
+        reverse_proxy backend:8080
     }
 
-	log {
-		output stdout
-	}
+    handle {
+        root * /usr/share/caddy
+        try_files {path} /index.html
+        file_server
+    }
+
+    log {
+        output stdout
+    }
 }

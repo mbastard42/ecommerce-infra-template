@@ -8,5 +8,13 @@ export default defineConfig({
 		tailwindcss(),
 		sveltekit(),
 		devtoolsJson()
-	]
+	],
+	server: {
+		proxy: {
+			'/health': {
+				target: 'http://backend:8000',
+				changeOrigin: true,
+			},
+		},
+	},
 });

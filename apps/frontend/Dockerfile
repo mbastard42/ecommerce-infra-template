@@ -22,5 +22,7 @@ RUN xcaddy build --with github.com/caddyserver/replace-response
 FROM gcr.io/distroless/static AS prod
 COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
 COPY --from=build /app/build /usr/share/caddy
-COPY ../Caddyfile /etc/caddy/Caddyfile
+COPY ./Caddyfile /etc/caddy/Caddyfile
 USER 65532:65532
+ENTRYPOINT ["/usr/bin/caddy"]
+CMD ["run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]

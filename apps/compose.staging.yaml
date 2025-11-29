@@ -1,0 +1,49 @@
+networks:
+  net-front:
+    driver: bridge
+  net-back:
+    driver: bridge
+
+services:
+
+  frontend:
+
+    build:
+      target: prod
+    networks: [net-front]
+    ports:
+      - "80:80"
+      - "443:443"
+
+  backend:
+
+    build:
+      target: prod
+    networks: [net-front, net-back]
+
+  postgres:
+
+    build:
+      target: dev
+    networks: [net-back]
+    ports: ["${POSTGRES_PORT}:${POSTGRES_PORT}"]
+
+  minio:
+
+    build:
+      target: dev
+    networks: [net-back]
+    ports:
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+      - "${MINIO_API_PORT}:${MINIO_API_PORT}"
+    entrypoint: ["/usr/local/bin/config.sh"]
+    command: ["server", "${MINIO_DATA_PATH}", "--console-address", ":${MINIO_CONSOLE_PORT}"]
+
+  admin:
+
+    build:
+      target: dev
+    networks: [net-back]
+    ports: ["8069:8069"]
+    entrypoint: ["/entrypoint.sh"]
+    command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]

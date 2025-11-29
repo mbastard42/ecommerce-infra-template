@@ -4,9 +4,10 @@ ENV_DEV ?= .env.dev
 COMPOSE := docker compose --project-directory . -f compose.yaml -f compose.dev.yaml --env-file $(ENV_DEV)
 UP := up --watch --build --remove-orphans
 DOWN := down --remove-orphans -v
+PRE := set -e; trap '$(COMPOSE) $(DOWN)' INT TERM EXIT
 
 up:
-	$(COMPOSE) $(UP) \
+	$(PRE); $(COMPOSE) $(UP) \
 		--no-attach postgres \
 		--no-attach minio \
 		--no-attach admin \
@@ -15,19 +16,19 @@ up:
 		--no-attach backend
 
 front:
-	$(COMPOSE) $(UP) frontend
+	$(PRE); $(COMPOSE) $(UP) frontend
 
 back:
-	$(COMPOSE) $(UP) backtend
+	$(PRE); $(COMPOSE) $(UP) backend frontend
 
 minio:
-	$(COMPOSE) $(UP) minio
+	$(PRE); $(COMPOSE) $(UP) minio
 
 postgres:
-	$(COMPOSE) $(UP) postgres
+	$(PRE); $(COMPOSE) $(UP) postgres
 
 admin:
-	$(COMPOSE) $(UP) admin
+	$(PRE); $(COMPOSE) $(UP) admin
 
 down:
 	$(COMPOSE) $(DOWN) 

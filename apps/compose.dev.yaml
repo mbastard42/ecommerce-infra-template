@@ -73,12 +73,30 @@ services:
     develop:
       watch:
         - path: ./backend/symfony/src
-          action: sync
           target: /app/src
+          action: sync
+        - path: ./backend/symfony/templates
+          target: /app/templates
+          action: sync
         - path: ./backend/symfony/config
           action: rebuild
         - path: ./backend/symfony/composer.json
           action: rebuild
+        - path: ./backend/symfony/composer.lock
+          action: rebuild
+        - path: ./backend/symfony/.env
+          action: rebuild
+        - path: ./backend/symfony/.env.local
+          action: rebuild
+        - path: ./backend/symfony/migrations
+          target: /app/migrations
+          action: sync
+        - path: ./backend/symfony/public
+          target: /app/public
+          action: sync
+        - path: ./backend/symfony/tests
+          target: /app/tests
+          action: sync
     networks: [dev]
     ports: ["8000:8000"]
     command: ["php","-S", "0.0.0.0:8000", "-t", "public"]
