@@ -2,31 +2,30 @@ SHELL := /bin/bash
 
 APP_DIR := ../apps/
 ENV_DEV ?= $(APP_DIR).env.test
-COMPOSE := docker compose --project-directory $(APP_DIR) -f $(APP_DIR)compose.yaml -f $(APP_DIR)compose.staging.yaml --env-file $(ENV_DEV)
+COMPOSE := docker compose --project-directory $(APP_DIR) -f $(APP_DIR)compose.yaml --env-file $(ENV_DEV)
 UP := up --build --remove-orphans
 DOWN := down --remove-orphans -v
-PRE := set -e; trap '$(COMPOSE) $(DOWN)' INT TERM EXIT
 
 up:
-	$(PRE); $(COMPOSE) $(UP)
+	$(COMPOSE) $(UP)
 
 front:
-	$(PRE); $(COMPOSE) $(UP) frontend
+	$(COMPOSE) $(UP) frontend
 
 back:
-	$(PRE); $(COMPOSE) $(UP) backend frontend
+	$(COMPOSE) $(UP) backend
 
 minio:
-	$(PRE); $(COMPOSE) $(UP) minio
+	$(COMPOSE) $(UP) minio minio-init
 
 postgres:
-	$(PRE); $(COMPOSE) $(UP) postgres
+	$(COMPOSE) $(UP) postgres
 
 admin:
-	$(PRE); $(COMPOSE) $(UP) admin
+	$(COMPOSE) $(UP) admin
 
 down:
-	$(PRE); $(COMPOSE) $(DOWN) 
+	$(COMPOSE) $(DOWN) 
 
 re: down up
 

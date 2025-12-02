@@ -1,6 +1,4 @@
-# [S3PO] Svelte Symfony S3 Postgres Odoo
-
-## Svelte
+# ecommerce-infra-template
 
 ```
 npx sv create

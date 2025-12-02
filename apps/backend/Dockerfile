@@ -1,18 +1,19 @@
-FROM php:8.3-fpm AS base
+FROM dunglas/frankenphp:1-php8.3 AS base
 WORKDIR /app
-RUN apt-get update \
-    && apt-get install -y git unzip libpq-dev \
-    && docker-php-ext-install pdo pdo_pgsql \
-    && rm -rf /var/lib/apt/lists/*
-COPY ./symfony/composer ./symfony/composer.json ./symfony/composer.lock ./
 
-FROM base AS dev
+FROM base AS deps
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git unzip libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql
+COPY ./symfony/composer ./symfony/composer.json ./symfony/composer.lock ./
+    
+FROM deps AS dev
 RUN ./composer install \
     --no-interaction \
     --no-scripts
 COPY ./symfony ./
 
-FROM base AS build
+FROM deps AS build
 ENV APP_ENV=prod \
     APP_DEBUG=0
 RUN ./composer install \
@@ -25,11 +26,12 @@ COPY ./symfony ./
 RUN php bin/console cache:clear --env=prod \
     && php bin/console cache:warmup --env=prod
 
-FROM dunglas/frankenphp:1-php8.3 AS prod
+FROM deps AS prod
 ENV APP_ENV=prod \
     APP_DEBUG=0 \
     SERVER_NAME=":8080"
-WORKDIR /app
+RUN apt-get purge -y git unzip libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 COPY --from=build /app ./
 EXPOSE 8080
 

@@ -1,7 +1,3 @@
-networks:
-  dev:
-    driver: bridge
-
 services:
 
   lgtm:
@@ -12,7 +8,6 @@ services:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
       GF_SERVER_ROOT_URL: http://localhost:3001
-    networks: [dev]
     ports:
       - "3001:3000" # Grafana UI
       - "3100:3100" # Loki endpoint
@@ -27,7 +22,6 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: password
       PGADMIN_SERVER_JSON_FILE: '/pgadmin4/servers.json'
-    networks: [dev]
     ports: ["4200:80"]
     logging:
       driver: loki
@@ -57,7 +51,6 @@ services:
           action: rebuild
         - path: ./frontend/svelte/tsconfig.json
           action: rebuild
-    networks: [dev]
     ports: ["5173:5173"]
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
     logging:
@@ -97,7 +90,6 @@ services:
         - path: ./backend/symfony/tests
           target: /app/tests
           action: sync
-    networks: [dev]
     ports: ["8000:8000"]
     command: ["php","-S", "0.0.0.0:8000", "-t", "public"]
     logging:
@@ -108,14 +100,6 @@ services:
 
   postgres:
 
-    build:
-      target: dev
-    develop:
-      watch:
-        - path: ./databases/postgres/init/
-          action: rebuild
-    networks: [dev]
-    ports: ["${POSTGRES_PORT}:${POSTGRES_PORT}"]
     logging:
       driver: loki
       options:
@@ -124,14 +108,8 @@ services:
 
   minio:
 
-    build:
-      target: dev
-    networks: [dev]
     ports:
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
-      - "${MINIO_API_PORT}:${MINIO_API_PORT}"
-    entrypoint: ["/usr/local/bin/config.sh"]
-    command: ["server", "${MINIO_DATA_PATH}", "--console-address", ":${MINIO_CONSOLE_PORT}"]
     logging:
       driver: loki
       options:
@@ -142,7 +120,6 @@ services:
 
     build:
       target: dev
-    networks: [dev]
     ports: ["8069:8069"]
     entrypoint: ["/entrypoint.sh"]
     command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
