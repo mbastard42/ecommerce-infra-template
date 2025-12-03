@@ -63,9 +63,6 @@
             </span>
           {/if}
         </h1>
-        <p class="text-sm text-slate-400">
-          Vue consolidée des services back-end (Symfony, Odoo, MinIO, Postgres...).
-        </p>
       </div>
 
       <button

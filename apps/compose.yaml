@@ -78,7 +78,7 @@ services:
       - net-back-minio
       - net-admin-minio
       - net-minio-init
-    command: ["server", "/data", "--console-address", ":9001"]
+    command: ["server", "/data"]
     restart: on-failure
 
   minio-init:
@@ -108,7 +108,7 @@ services:
     container_name: admin
     build:
       context: ./admin/
-      target: dev
+      target: prod
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
@@ -119,6 +119,7 @@ services:
       MINIO_ENDPOINT: ${MINIO_ENDPOINT}
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
     networks:
       - net-back-admin
       - net-admin-minio

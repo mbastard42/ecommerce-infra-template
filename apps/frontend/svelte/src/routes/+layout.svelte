@@ -14,12 +14,8 @@
 	  <div class="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
 		<!-- Logo / titre -->
 		<div class="flex items-center gap-2">
-		  <div class="h-7 w-7 rounded-lg bg-slate-800 flex items-center justify-center text-xs font-semibold">
-			S3PO
-		  </div>
 		  <div class="flex flex-col leading-tight">
 			<span class="text-sm font-medium">Dev console</span>
-			<span class="text-[11px] text-slate-400">Symfony · Odoo · MinIO · Postgres</span>
 		  </div>
 		</div>
   
@@ -38,18 +34,6 @@
 			>
 			  <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
 			  Grafana
-			</a>
-  
-			<a
-			  href="http://localhost:4200"
-			  target="_blank"
-			  rel="noreferrer"
-			  class="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 px-2.5 py-1.5
-					 text-[11px] text-slate-200 border border-slate-700/70 hover:bg-slate-800 hover:border-slate-500
-					 whitespace-nowrap transition-colors"
-			>
-			  <span class="h-1.5 w-1.5 rounded-full bg-orange-400"></span>
-			  pgAdmin
 			</a>
   
 			<a

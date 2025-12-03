@@ -1,3 +1,7 @@
+volumes:
+  pgdata:
+  minio-data:
+
 services:
 
   lgtm:
@@ -11,23 +15,6 @@ services:
     ports:
       - "3001:3000" # Grafana UI
       - "3100:3100" # Loki endpoint
-
-  pgadmin:
-
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    volumes:
-      - ./databases/servers.json:/pgadmin4/servers.json
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: password
-      PGADMIN_SERVER_JSON_FILE: '/pgadmin4/servers.json'
-    ports: ["4200:80"]
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://localhost:3100/loki/api/v1/push"
-        loki-external-labels: "service=pgadmin,env=dev"
 
   frontend:
 
@@ -100,6 +87,10 @@ services:
 
   postgres:
 
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./databases/postgres/init/:/docker-entrypoint-initdb.d:ro
+      - ./databases/postgres/pg_hba.conf.tpl:/etc/postgresql/pg_hba.conf.tpl:ro
     logging:
       driver: loki
       options:
@@ -108,8 +99,11 @@ services:
 
   minio:
 
+    volumes:
+      - minio-data:/data
     ports:
-      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+      - "9001:9001"
+    command: ["server", "/data", "--console-address", ":9001"]
     logging:
       driver: loki
       options:
@@ -121,8 +115,6 @@ services:
     build:
       target: dev
     ports: ["8069:8069"]
-    entrypoint: ["/entrypoint.sh"]
-    command: ["odoo", "-i", "setup", "-c", "/etc/odoo/odoo.conf"]
     logging:
       driver: loki
       options:
