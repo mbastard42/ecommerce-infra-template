@@ -35,7 +35,7 @@
             after = [ "network-online.target" ];
 
             serviceConfig = {
-              WorkingDirectory = "${config.repo.dir}/system/services/frontend/svelte";
+              WorkingDirectory = "${repoDir}/system/services/frontend/svelte";
               ExecStart = "${pkgs.nodejs_22}/bin/npm run dev -- --host 0.0.0.0";
 
               Restart = "always";
