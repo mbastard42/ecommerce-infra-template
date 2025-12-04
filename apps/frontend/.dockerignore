@@ -1,8 +1,0 @@
-svelte/node_modules
-svelte/.svelte-kit
-svelte/build
-svelte/dist
-svelte/.vscode/
-
-svelte/README.md
-svelte/.gitignore

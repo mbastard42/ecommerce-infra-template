@@ -1,8 +1,7 @@
 SHELL := /bin/bash
 
 APP_DIR := ../apps/
-ENV_DEV ?= $(APP_DIR).env.test
-COMPOSE := docker compose --project-directory $(APP_DIR) -f $(APP_DIR)compose.yaml --env-file $(ENV_DEV)
+COMPOSE := docker compose --project-directory $(APP_DIR) -f $(APP_DIR)compose.yaml --env-file $(APP_DIR).env.test
 UP := up --build --remove-orphans
 DOWN := down --remove-orphans -v
 

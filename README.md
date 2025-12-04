@@ -57,5 +57,5 @@ If you’d like to dive deeper, the full technical documentation covers:
 - architecture diagrams
 - service-by-service breakdown
 - configuration strategies
-- deployment patterns (including NixOS)
+- deployment patterns
 - improvements and next steps
